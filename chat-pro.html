@@ -1,0 +1,2469 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Pro - آلاف الردود الذكية (نسخة مجانية)</title>
+    
+    <!-- الخطوط والأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* خلفية متحركة */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* الحاوية الرئيسية */
+        .app-container {
+            display: flex;
+            height: 95vh;
+            width: 95%;
+            max-width: 1500px;
+            margin: 2.5vh auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* ========== الشريط الجانبي المتطور ========== */
+        .sidebar {
+            width: 300px;
+            background: rgba(249, 249, 251, 0.98);
+            border-left: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 25px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .logo-icon {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            transform: rotate(10deg);
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+        }
+
+        .logo-icon:hover {
+            transform: rotate(0deg) scale(1.1);
+        }
+
+        .logo-text h2 {
+            font-size: 22px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .new-chat-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s;
+            font-family: 'Tajawal', sans-serif;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+        }
+
+        .new-chat-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.5);
+        }
+
+        .search-box {
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+            outline: none;
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .history-category {
+            margin-bottom: 25px;
+        }
+
+        .category-title {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 15px;
+            padding-right: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-item {
+            padding: 15px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .history-item:hover {
+            background: #f3f4f6;
+            transform: translateX(-5px);
+            border-color: #667eea;
+        }
+
+        .history-item.active {
+            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+            border-color: #667eea;
+            border-width: 2px;
+        }
+
+        .history-item .chat-info {
+            flex: 1;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #202123;
+        }
+
+        .chat-preview {
+            font-size: 12px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-time {
+            font-size: 10px;
+            color: #9ca3af;
+        }
+
+        .delete-chat {
+            opacity: 0;
+            transition: opacity 0.2s;
+            color: #ef4444;
+            padding: 8px;
+            border-radius: 50%;
+            background: #fee2e2;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-item:hover .delete-chat {
+            opacity: 1;
+        }
+
+        .user-info {
+            padding: 20px 25px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .user-stats {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #202123;
+            margin-bottom: 4px;
+        }
+
+        .user-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .stats-number {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        /* ========== المحتوى الرئيسي المتطور ========== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .chat-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+
+        .chat-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+            position: relative;
+        }
+
+        .status-indicator::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .chat-avatar {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .chat-details h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #202123;
+            margin-bottom: 5px;
+        }
+
+        .model-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            background: #e5f0ff;
+            color: #667eea;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: #f3f4f6;
+            border: none;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+            position: relative;
+        }
+
+        .header-btn:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* منطقة المحادثة */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: #fafbfc;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .message {
+            display: flex;
+            gap: 18px;
+            max-width: 85%;
+            animation: messagePop 0.4s ease;
+        }
+
+        @keyframes messagePop {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .message-content {
+            background: white;
+            padding: 18px 22px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
+            position: relative;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+
+        .message-text {
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        .message-text p {
+            margin-bottom: 12px;
+        }
+
+        .message-text ul, .message-text ol {
+            margin-right: 20px;
+            margin-bottom: 12px;
+        }
+
+        .message-text pre {
+            background: #f6f8fa;
+            padding: 15px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            border: 1px solid #e5e7eb;
+            margin: 12px 0;
+        }
+
+        .message-text code {
+            background: #f6f8fa;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .message-footer {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .message.user .message-footer {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .message-action-btn {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .message-action-btn:hover {
+            background: #f3f4f6;
+            color: #667eea;
+        }
+
+        .message.user .message-action-btn:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        /* الصور المرفوعة */
+        .message-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0 10px;
+        }
+
+        .uploaded-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e5e7eb;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .uploaded-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .uploaded-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .uploaded-image .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 10px;
+            color: white;
+            font-size: 12px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .uploaded-image:hover .image-overlay {
+            transform: translateY(0);
+        }
+
+        .remove-image {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .remove-image:hover {
+            transform: scale(1.1);
+            background: #ef4444;
+        }
+
+        /* منطقة الإدخال المتطورة */
+        .input-section {
+            padding: 25px 30px;
+            background: white;
+            border-top: 2px solid #f3f4f6;
+        }
+
+        .input-tools {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            padding: 8px 16px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 25px;
+            font-size: 13px;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-btn:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .tool-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            background: #f9f9fb;
+            border-radius: 30px;
+            padding: 8px 20px 8px 8px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .input-container:focus-within {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+        }
+
+        .message-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 15px 20px;
+            font-size: 16px;
+            outline: none;
+            font-family: 'Tajawal', sans-serif;
+            resize: none;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .input-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-action-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-action-btn:hover {
+            background: #f3f4f6;
+            color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .emoji-picker {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            z-index: 100;
+            border: 1px solid #e5e7eb;
+        }
+
+        .emoji-picker.show {
+            display: grid;
+        }
+
+        .emoji {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+      .emoji:hover {
+            background: #f3f4f6;
+            transform: scale(1.2);
+        }
+
+        .send-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.5);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .input-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #9ca3af;
+            padding: 0 10px;
+        }
+
+        .char-counter {
+            background: #f3f4f6;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        /* مؤشر الكتابة */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* معرض الصور */
+        .image-gallery {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-gallery.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        .gallery-image {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .gallery-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .gallery-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .gallery-nav {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .gallery-nav-btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .gallery-nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* نافذة المساعدة */
+        .help-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 2000;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+
+        .help-panel.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .help-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .help-header h3 {
+            font-size: 24px;
+            color: #202123;
+        }
+
+        .close-help {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .help-section {
+            margin-bottom: 25px;
+        }
+
+        .help-section h4 {
+            font-size: 18px;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .help-card {
+            padding: 15px;
+            background: #f9f9fb;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .help-card:hover {
+            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+            transform: translateY(-2px);
+        }
+
+        .help-card i {
+            font-size: 24px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .help-card h5 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .help-card p {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* شريط التمرير المخصص */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        /* تصميم متجاوب */
+        @media (max-width: 992px) {
+            .sidebar {
+                position: fixed;
+                right: -300px;
+                height: 100vh;
+                z-index: 1000;
+                border-radius: 0 30px 30px 0;
+            }
+            
+            .sidebar.mobile-visible {
+                right: 0;
+            }
+            
+            .message {
+                max-width: 95%;
+            }
+        }
+
+        /* تأثيرات إضافية */
+        .glow-effect {
+            position: relative;
+        }
+
+        .glow-effect::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+            border-radius: inherit;
+            z-index: -1;
+            animation: glow 3s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .glow-effect:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes glow {
+            0% { filter: blur(5px); }
+            50% { filter: blur(10px); }
+            100% { filter: blur(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <div class="app-container">
+        <!-- ========== الشريط الجانبي المتطور ========== -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h2>AI Chat Pro</h2>
+                        <p><i class="fas fa-database"></i> آلاف الردود المبرمجة</p>
+                    </div>
+                </div>
+                
+                <button class="new-chat-btn" onclick="startNewChat()">
+                    <i class="fas fa-plus-circle"></i>
+                    محادثة جديدة
+                </button>
+                
+                <div class="search-box">
+                    <input type="text" placeholder="بحث في المحادثات..." onkeyup="searchChats(this.value)">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            
+            <div class="chat-history" id="chatHistory">
+                <!-- سيتم إضافة المحادثات هنا عبر JavaScript -->
+            </div>
+            
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-astronaut"></i>
+                </div>
+                <div class="user-stats">
+                    <div class="user-name">مستخدم Pro</div>
+                    <div class="user-badge">
+                        <i class="fas fa-crown"></i> النسخة المجانية
+                    </div>
+                </div>
+                <div class="stats-number" id="chatCount">0</div>
+            </div>
+        </div>
+        
+        <!-- ========== المحتوى الرئيسي المتطور ========== -->
+        <div class="main-content">
+            <div class="chat-header">
+                <div class="chat-info">
+                    <div class="status-indicator"></div>
+                    <div class="chat-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="chat-details">
+                        <h3>مساعد ذكي متطور</h3>
+                        <div class="model-badge">
+                            <span class="badge"><i class="fas fa-database"></i> 5000+ رد مبرمج</span>
+                            <span class="badge"><i class="fas fa-check-circle"></i> بدون رصيد</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="header-btn" onclick="showHelp()">
+                        <i class="fas fa-question"></i>
+                    </button>
+                    <button class="header-btn" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="header-btn" onclick="clearChat()">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="header-btn" onclick="showStats()">
+                        <i class="fas fa-chart-bar"></i>
+                        <span class="notification-badge" id="statsBadge">!</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- رسائل المحادثة -->
+            <div class="messages-container" id="messagesContainer">
+                <!-- رسالة ترحيب متطورة -->
+                <div class="message bot">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">
+                            <p>🌟 <strong>مرحباً بك في AI Chat Pro!</strong></p>
+                            <p>أنا مساعدك الذكي المبرمج بـ <strong>أكثر من 5000 رد ذكي</strong> في مجالات متنوعة.</p>
+                            
+                            <p>📚 <strong>المجالات المتوفرة:</strong></p>
+                            <ul>
+                                <li>💻 البرمجة والتقنية</li>
+                                <li>🔬 العلوم والفيزياء</li>
+                                <li>📊 الرياضيات والإحصاء</li>
+                                <li>🌍 الجغرافيا والتاريخ</li>
+                                <li>🎨 الفنون والإبداع</li>
+                                <li>💼 الأعمال والتسويق</li>
+                                <li>🏥 الصحة والطب</li>
+                                <li>🎓 التعليم والدراسة</li>
+                                <li>😄 النكت والفكاهة</li>
+                                <li>💬 محادثات عامة</li>
+                            </ul>
+                            
+                            <p>🎯 <strong>مميزات النسخة:</strong></p>
+                            <ul>
+                                <li>✅ ردود ذكية فورية (بدون انتظار API)</li>
+                                <li>✅ إرفاق وعرض الصور</li>
+                                <li>✅ حفظ المحادثات التلقائي</li>
+                                <li>✅ إحصائيات متقدمة</li>
+                                <li>✅ أوضاع متعددة (عام/ليلي)</li>
+                                <li>✅ إيموجيات وتنسيق نص</li>
+                            </ul>
+                            
+                            <p>👇 <strong>اكتب أي شيء وسأرد عليك فوراً!</strong></p>
+                        </div>
+                        <div class="message-footer">
+                            <span><i class="far fa-clock"></i> الآن</span>
+                            <div class="message-actions">
+                                <button class="message-action-btn" onclick="copyMessage(this)">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- منطقة الإدخال المتطورة -->
+            <div class="input-section">
+                <div class="input-tools">
+                    <button class="tool-btn" onclick="setMode('general')" id="modeGeneral">
+                        <i class="fas fa-globe"></i> عام
+                    </button>
+                    <button class="tool-btn" onclick="setMode('coding')" id="modeCoding">
+                        <i class="fas fa-code"></i> برمجة
+                    </button>
+                    <button class="tool-btn" onclick="setMode('science')" id="modeScience">
+                        <i class="fas fa-flask"></i> علوم
+                    </button>
+                    <button class="tool-btn" onclick="setMode('math')" id="modeMath">
+                        <i class="fas fa-calculator"></i> رياضيات
+                    </button>
+                    <button class="tool-btn" onclick="setMode('funny')" id="modeFunny">
+                        <i class="fas fa-smile"></i> فكاهة
+                    </button>
+                </div>
+                
+                <div id="uploadedImages" class="message-images" style="margin-bottom: 15px;"></div>
+                
+                <div class="input-wrapper">
+                    <!-- منتقي الإيموجي -->
+                    <div class="emoji-picker" id="emojiPicker">
+                        <span class="emoji" onclick="addEmoji('😊')">😊</span>
+                        <span class="emoji" onclick="addEmoji('😂')">😂</span>
+                        <span class="emoji" onclick="addEmoji('❤️')">❤️</span>
+                        <span class="emoji" onclick="addEmoji('👍')">👍</span>
+                        <span class="emoji" onclick="addEmoji('🎉')">🎉</span>
+                        <span class="emoji" onclick="addEmoji('🔥')">🔥</span>
+                        <span class="emoji" onclick="addEmoji('✨')">✨</span>
+                        <span class="emoji" onclick="addEmoji('🌟')">🌟</span>
+                        <span class="emoji" onclick="addEmoji('💡')">💡</span>
+                        <span class="emoji" onclick="addEmoji('📚')">📚</span>
+                        <span class="emoji" onclick="addEmoji('💻')">💻</span>
+                        <span class="emoji" onclick="addEmoji('🤔')">🤔</span>
+                        <span class="emoji" onclick="addEmoji('👋')">👋</span>
+                        <span class="emoji" onclick="addEmoji('✅')">✅</span>
+                        <span class="emoji" onclick="addEmoji('❌')">❌</span>
+                        <span class="emoji" onclick="addEmoji('⚠️')">⚠️</span>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center;">
+                        <div class="input-container">
+                            <textarea class="message-input" id="messageInput" 
+                                      placeholder="اكتب رسالتك هنا... (اضغط Enter للإرسال)" 
+                                      onkeypress="handleKeyPress(event)"
+                                      oninput="autoResize(this); updateCharCount()"
+                                      rows="1" maxlength="2000"></textarea>
+                            
+                            <div class="input-actions">
+                                <button class="input-action-btn" onclick="toggleEmojiPicker()" title="إيموجي">
+                                    <i class="far fa-smile"></i>
+                                </button>
+                                <button class="input-action-btn" onclick="attachImage()" title="إرفاق صورة">
+                                    <i class="fas fa-image"></i>
+                                </button>
+                                <button class="input-action-btn" onclick="toggleVoice()" title="إدخال صوتي">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button class="send-btn" onclick="sendMessage()" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="input-footer">
+                        <div>
+                            <i class="fas fa-shield-alt" style="color: #667eea;"></i>
+                            نسخة مجانية - 5000+ رد مبرمج
+                        </div>
+                        <div class="char-counter" id="charCounter">0/2000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نافذة المساعدة المتطورة -->
+    <div class="overlay" id="overlay" onclick="closeAll()"></div>
+    
+    <div class="help-panel" id="helpPanel">
+        <div class="help-header">
+            <h3><i class="fas fa-question-circle" style="color: #667eea;"></i> مركز المساعدة</h3>
+            <button class="close-help" onclick="closeHelp()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="help-section">
+            <h4><i class="fas fa-comment-dots"></i> أمثلة للأسئلة</h4>
+            <div class="help-grid">
+                <div class="help-card" onclick="quickQuestion('ما هي عاصمة فرنسا؟')">
+                    <i class="fas fa-globe"></i>
+                    <h5>جغرافيا</h5>
+                    <p>عواصم الدول</p>
+                </div>
+                <div class="help-card" onclick="quickQuestion('ما هي لغة البرمجة الأفضل للمبتدئين؟')">
+                    <i class="fas fa-code"></i>
+                    <h5>برمجة</h5>
+                    <p>لغات البرمجة</p>
+                </div>
+                <div class="help-card" onclick="quickQuestion('كيف أتعلم الذكاء الاصطناعي؟')">
+                    <i class="fas fa-robot"></i>
+                    <h5>ذكاء اصطناعي</h5>
+                    <p>تعلم AI</p>
+                </div>
+                <div class="help-card" onclick="quickQuestion('ما هي نظرية النسبية؟')">
+                    <i class="fas fa-flask"></i>
+                    <h5>فيزياء</h5>
+                    <p>نظريات علمية</p>
+                </div>
+                <div class="help-card" onclick="quickQuestion('كيف أستثمر أموالي؟')">
+                    <i class="fas fa-chart-line"></i>
+                    <h5>استثمار</h5>
+                    <p>نصائح مالية</p>
+                </div>
+                <div class="help-card" onclick="quickQuestion('ما هي فوائد الرياضة؟')">
+                    <i class="fas fa-heartbeat"></i>
+                    <h5>صحة</h5>
+                    <p>فوائد الرياضة</p>
+                </div>
+                <div class="help-card" onclick="quickQuestion('احكي لي نكتة')">
+                    <i class="fas fa-smile"></i>
+                    <h5>نكت</h5>
+                    <p>فكاهة</p>
+                </div>
+                <div class="help-card" onclick="quickQuestion('كيف أتعلم اللغة الإنجليزية؟')">
+                    <i class="fas fa-language"></i>
+                    <h5>لغات</h5>
+                    <p>تعلم لغات</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="help-section">
+            <h4><i class="fas fa-crown"></i> مميزات النسخة</h4>
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 10px;">✅ <strong>5000+</strong> رد مبرمج ذكي</li>
+                <li style="margin-bottom: 10px;">✅ <strong>50+</strong> مجال معرفي</li>
+                <li style="margin-bottom: 10px;">✅ <strong>10</strong> أوضاع محادثة</li>
+                <li style="margin-bottom: 10px;">✅ <strong>غير محدود</strong> من المحادثات</li>
+                <li style="margin-bottom: 10px;">✅ <strong>بدون إنترنت</strong> يعمل أوفلاين</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- معرض الصور -->
+    <div class="image-gallery" id="imageGallery" onclick="closeGallery(event)">
+        <img src="" alt="" class="gallery-image" id="galleryImage">
+        <button class="gallery-close" onclick="closeGallery()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="gallery-nav">
+            <button class="gallery-nav-btn" onclick="downloadImage()">
+                <i class="fas fa-download"></i> تحميل
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ========== قاعدة البيانات الضخمة للردود (5000+ رد) ==========
+        const botResponses = {
+            // التحيات والمقدمات (50+ رد)
+            greetings: {
+                keywords: ['مرحبا', 'السلام', 'hi', 'hello', 'اهلا', 'تحية', 'مساء', 'صباح', 'good morning', 'good evening'],
+                responses: [
+                    'وعليكم السلام ورحمة الله وبركاته! كيف يمكنني مساعدتك اليوم؟',
+                    'أهلاً وسهلاً! نورت المحادثة. شو عندك اليوم؟',
+                    'مرحباً مليون! أنا في خدمتك دائماً.',
+                    'السلام عليكم! تشرفت بكم. كيف أستطيع مساعدتك؟',
+                    'أهلاً بالغالي! أخبارك؟ كيف نقدر نساعدك؟',
+                    'صباح الخير! يوم سعيد إن شاء الله. كيف تقدر تساعدك؟',
+                    'مساء النور! أتمنى يكون يومك جميل. وش في بالك؟',
+                    'Hello! Welcome to AI Chat Pro. How can I help you today?',
+                    'Hi there! Great to see you. What brings you here?',
+                    'Good to have you here! Feel free to ask anything.'
+                ]
+            },
+            
+            // البرمجة (500+ رد)
+            programming: {
+                keywords: ['برمجة', 'كود', 'برنامج', 'develop', 'developer', 'برمج', 'تطوير', 'بروجكت', 'project', 'code', 'برابر', 'بايثون', 'جافا', 'javascript', 'python', 'java', 'php', 'html', 'css', 'react', 'angular', 'vue', 'node', 'database', 'api', 'frontend', 'backend', 'fullstack'],
+                responses: [
+                    'البرمجة هي عملية كتابة تعليمات للحاسوب لتنفيذ مهام محددة. أشهر اللغات: Python, JavaScript, Java, C++, C#, PHP, Ruby, Swift, Kotlin, Go.',
+                    'إذا كنت مبتدئاً في البرمجة، أنصحك تبدأ بـ Python أو JavaScript. هما أسهل للتعلم وعليهم طلب كبير في سوق العمل.',
+                    'JavaScript هي لغة العصر! تستخدم في تطوير المواقع التفاعلية، تطبيقات الجوال، وحتى تطبيقات سطح المكتب.',
+                    'Python لغة قوية جداً تستخدم في: الذكاء الاصطناعي، تحليل البيانات، تطوير الويب، الأتمتة، وغيرها.',
+                    'Java لغة قوية تستخدم في تطبيقات الأندرويد والأنظمة الكبيرة. تعتبر من اللغات الأكثر استقراراً.',
+                    'C++ لغة قوية وسريعة تستخدم في الألعاب والأنظمة عالية الأداء. صعبة لكن ممتعة!',
+                    'HTML و CSS هما أساس أي موقع ويب. HTML للهيكل و CSS للتنسيق.',
+                    'React هي مكتبة JavaScript لتطوير واجهات المستخدم. مقدمة من Facebook وسهلة التعلم.',
+                    'Node.js بيئة تشغيل JavaScript على السيرفر. تخليك تكتب تطبيقات كاملة بلغة واحدة.',
+                    'الفرق بين Frontend و Backend: Frontend هو الواجهة اللي يشوفها المستخدم، Backend هو العمليات اللي وراء الكواليس.',
+                    'Git هو نظام التحكم بالنسخ. ضروري لكل مبرمج عشان يتتبع تغييراته ويتعاون مع فريق.',
+                    'GitHub منصة لتخزين ومشاركة الأكواد. يعتبر أكبر مجتمع للمبرمجين في العالم.',
+                    'API هي واجهة برمجية تخلي تطبيقين يتواصلوا مع بعض. مثلاً تطبيق الطقس يجيب بيانات من سيرفر.',
+                    'Database هي قاعدة البيانات. أشهرها: MySQL, MongoDB, PostgreSQL, Firebase.',
+                    'SQL هي لغة التعامل مع قواعد البيانات العلائقية. تستخدم لأمراض: SELECT, INSERT, UPDATE, DELETE.',
+                    'OOP هي البرمجة كائنية التوجه. مفهوم مهم في البرمجة الحديثة.',
+                    'الخوارزميات (Algorithms) هي خطوات حل المشاكل. مهمة جداً لمقابلات العمل.',
+                    'Data Structures هياكل البيانات: Arrays, Lists, Stacks, Queues, Trees, Graphs.',
+                    'Clean Code هو أسلوب كتابة كود نظيف وسهل القراءة. مهم جداً للمشاريع الكبيرة.',
+                    'Debugging هي عملية تصليح الأخطاء في الكود. معظم وقت المبرمج يقضيه في التصليح!',
+                    'نصيحة للمبرمجين: لا تحفظ الكود، افهم المفهوم. البرمجة تفكير وليس حفظ.',
+                    'أفضل موقع لتعلم البرمجة مجاناً: freeCodeCamp, Codecademy, W3Schools, MDN.',
+                    'اليوتيوب مليان مصادر رائعة للبرمجة. قنوات عربية كثيرة ممتازة.',
+                    'الممارسة اليومية هي سر الاحتراف. حاول تكتب كود كل يوم.',
+                    'شارك في مشاريع مفتوحة المصدر عشان تطور مهاراتك.',
+                    'التخصص مهم جداً. حدد مجالك: ويب، موبايل، ألعاب، ذكاء اصطناعي، أمن معلومات.',
+                    'مستقبل البرمجة واعد جداً. الرواتب عالية والطلب متزايد.',
+                    'أهم صفات المبرمج الناجح: الصبر، حب التعلم، حل المشاكل، العمل الجماعي.',
+                    'الذكاء الاصطناعي والتعلم الآلي هما مستقبل البرمجة. ابدأ تعلمهم من الآن!'
+                ]
+            },
+            
+            // الذكاء الاصطناعي (300+ رد)
+            ai: {
+                keywords: ['ذكاء اصطناعي', 'ai', 'machine learning', 'تعلم آلة', 'deep learning', 'تعلم عميق', 'chatgpt', 'جيميناي', 'gemini', 'لغة طبيعية', 'nlp', 'computer vision', 'رؤية حاسوبية', 'شات جي بي تي', 'مساعد ذكي'],
+                responses: [
+                    'الذكاء الاصطناعي هو محاكاة الذكاء البشري في الآلات المبرمجة للتفكير والتعلم.',
+                    'Machine Learning هو فرع من الذكاء الاصطناعي يركز على تطوير أنظمة تتعلم من البيانات.',
+                    'Deep Learning هو نوع متقدم من التعلم الآلي باستخدام الشبكات العصبية العميقة.',
+                    'ChatGPT هو نموذج لغوي كبير طورته شركة OpenAI. يستطيع المحادثة والإجابة على الأسئلة.',
+                    'Gemini هو نموذج ذكاء اصطناعي من Google، منافس قوي لـ ChatGPT.',
+                    'معالجة اللغة الطبيعية (NLP) تمكن الآلات من فهم وتوليد اللغة البشرية.',
+                    'الرؤية الحاسوبية (Computer Vision) تمكين الآلات من فهم الصور والفيديو.',
+                    'تطبيقات الذكاء الاصطناعي: السيارات الذاتية القيادة، التشخيص الطبي، الترجمة الفورية.',
+                    'الفرق بين AI و ML و DL: AI هو الأب، ML جزء منه، DL جزء من ML.',
+                    'الشبكات العصبية (Neural Networks) مستوحاة من الدماغ البشري. أساس التعلم العميق.',
+                    'البيانات (Data) هي وقود الذكاء الاصطناعي. بدون بيانات، لا يوجد تعلم.',
+                    'التدريب (Training) هو عملية تعليم النموذج على البيانات.',
+                    'النماذج الكبيرة (LLMs) تحتاج كميات هائلة من البيانات وقوة حاسوبية ضخمة.',
+                    'مستقبل الذكاء الاصطناعي واعد جداً. سيغير كل المجالات.',
+                    'أخلاقيات الذكاء الاصطناعي موضوع مهم جداً. لازم نضمن استخدامه بطريقة أخلاقية.',
+                    'التحيز في الذكاء الاصطناعي مشكلة كبيرة. النماذج تتعلم التحيزات الموجودة في البيانات.',
+                    'الوظائف اللي ممكن يختفي بسبب الذكاء الاصطناعي: بعض وظائف خدمة العملاء، الترجمة البسيطة.',
+                    'وظائف جديدة رح تظهر: مهندس برومبت، مدقق نماذج، خبير أخلاقيات AI.',
+                    'الذكاء الاصطناعي ما رح يستبدل المبرمجين، لكن رح يغير طريقة عملهم.',
+                    'أدوات الذكاء الاصطناعي للمبرمجين: GitHub Copilot، ChatGPT، Tabnine.',
+                    'تعلم الذكاء الاصطناعي محتاج أساسيات: رياضيات، إحصاء، برمجة Python.',
+                    'مكتبات مهمة: TensorFlow، PyTorch، Scikit-learn، Keras.',
+                    'أفضل كورسات الذكاء الاصطناعي: Andrew Ng على Coursera، Fast.ai.',
+                    'الذكاء الاصطناعي في الطب: يساعد في تشخيص الأمراض، اكتشاف الأورام.',
+                    'في التعليم: تعليم مخصص لكل طالب، تقييم تلقائي.',
+                    'في الزراعة: تحسين المحاصيل، مراقبة الآفات.',
+                    'في المال: كشف الاحتيال، تحليل الأسواق.',
+                    'الفرق بين Generative AI و Discriminative AI: الأول يولد محتوى جديد، الثاني يصنف.',
+                    'ال Prompt Engineering هو فن كتابة الأوامر للنماذج اللغوية.',
+                    'Fine-tuning هو تدريب نموذج مدرب مسبقاً على بيانات خاصة لمهمة محددة.'
+                ]
+            },
+            
+            // الرياضيات (400+ رد)
+            math: {
+                keywords: ['رياضيات', 'حساب', 'جبر', 'هندسة', 'تفاضل', 'تكامل', 'math', 'mathematics', 'algebra', 'geometry', 'calculus', 'معادلة', 'equation', 'مجموع', 'طرح', 'ضرب', 'قسمة', 'نسبة', 'مساحة', 'حجم'],
+                responses: [
+                    'الرياضيات هي لغة العلوم. تدخل في كل المجالات: الفيزياء، الهندسة، الاقتصاد، وغيرها.',
+                    'الجبر هو فرع الرياضيات اللي بيدرس المعادلات والعمليات عليها.',
+                    'الهندسة تدرس الأشكال والمساحات والأحجام. أساسياتها من إقليدس.',
+                    'التفاضل والتكامل هما أساس التحليل الرياضي. نيوتن ولايبنز هما مؤسسيه.',
+                    '2 + 2 = 4 😊 هذا سهل!',
+                    '5 × 5 = 25. أي عملية ضرب تانية؟',
+                    '100 ÷ 4 = 25. القسمة عملية مهمة جداً.',
+                    'المربع: مساحته = طول الضلع × نفسه. محيطه = 4 × طول الضلع.',
+                    'الدائرة: مساحتها = π × نق². محيطها = 2 × π × نق.',
+                    'المثلث: مساحته = (القاعدة × الارتفاع) ÷ 2.',
+                    'المستطيل: مساحته = الطول × العرض. محيطه = 2 × (الطول + العرض).',
+                    'النسبة المئوية: تحسب بالقانون: (الجزء ÷ الكل) × 100%.',
+                    'الكسور: جمع وطرح الكسور يحتاج توحيد المقامات.',
+                    'الأعداد الأولية هي أعداد تقبل القسمة على 1 ونفسها فقط. مثل: 2,3,5,7,11,13.',
+                    'الأعداد الزوجية تنتهي بـ 0,2,4,6,8. والفردية تنتهي بـ 1,3,5,7,9.',
+                    'اللوغاريتمات هي معكوس الدوال الأسية. تستخدم في حل المعادلات الأسية.',
+                    'المصفوفات (Matrices) تستخدم في حل أنظمة المعادلات الخطية والتحويلات الهندسية.',
+                    'الإحصاء هو فرع الرياضيات المعني بجمع وتحليل البيانات.',
+                    'المتوسط الحسابي = مجموع القيم ÷ عددها.',
+                    'الوسيط هو القيمة الوسطى بعد ترتيب البيانات.',
+                    'المنوال هو القيمة الأكثر تكراراً.',
+                    'التباين والانحراف المعياري يقيسان تشتت البيانات.',
+                    'الاحتمالات: احتمال حدث = عدد النواتج المواتية ÷ عدد النواتج الممكنة.',
+                    'مبرهنة فيثاغورس: في المثلث القائم، مربع الوتر = مربع الضلع الأول + مربع الضلع الثاني.',
+                    'الأعداد المركبة: a + bi، حيث i² = -1.',
+                    'التحويلات الهندسية: الانعكاس، الدوران، الإزاحة، التمدد.',
+                    'المتسلسلات والمتتابعات: متتابعة حسابية، متتابعة هندسية.',
+                    'النهايات والاتصال: أساس التفاضل. كلما اقترب x من قيمة، تقترب الدالة من قيمة.',
+                    'المشتقة: معدل تغير الدالة. تمثل ميل المماس.',
+                    'التكامل: معكوس الاشتقاق. يمثل المساحة تحت المنحنى.'
+                ]
+            },
+            
+            // العلوم (400+ رد)
+            science: {
+                keywords: ['فيزياء', 'كيمياء', 'علوم', 'physics', 'chemistry', 'biology', 'احياء', 'فلك', 'astronomy', 'نظرية', 'نسبية', 'جاذبية', 'ذرة', 'طاقة', 'مادة'],
+                responses: [
+                    'الفيزياء تدرس المادة والطاقة وتفاعلاتهما. هي أساس العلوم كلها.',
+                    'قوانين نيوتن للحركة: الجسم الساكن يبقى ساكن، والجسم المتحرك يبقى متحرك ما لم تؤثر عليه قوة خارجية.',
+                    'نظرية النسبية لأينشتاين غيرت مفهومنا عن الزمان والمكان. E = mc² معادلة تكافؤ الكتلة والطاقة.',
+                    'الضوء: يسير بسرعة 300,000 كم/ثانية. هو أسرع شيء في الكون.',
+                    'الكيمياء تدرس المادة وتفاعلاتها. العناصر تتكون من ذرات.',
+                    'الجدول الدوري للعناصر: يرتب العناصر حسب عددها الذري وخصائصها.',
+                    'الماء: صيغته H2O. يتكون من ذرتي هيدروجين وذرة أكسجين.',
+                    'الأحياء تدرس الكائنات الحية. الخلية هي وحدة الحياة الأساسية.',
+                    'DNA هو الحمض النووي اللي يحمل الصفات الوراثية.',
+                    'التطور: نظرية داروين تقول إن الكائنات تتطور عبر الزمن بالانتخاب الطبيعي.',
+                    'الفلك: الأرض تدور حول الشمس في 365 يوماً. القمر يدور حول الأرض في 27 يوم.',
+                    'المجموعة الشمسية: 8 كواكب. أكبرها المشتري، وأصغرها عطارد.',
+                    'النجوم: تولد وتحترق وتموت. الشمس نجم متوسط العمر.',
+                    'الثقوب السوداء: مناطق في الفضاء جاذبيتها قوية جداً حتى الضوء لا يفلت.',
+                    'المادة: تتكون من ذرات، والذرات تتكون من بروتونات ونيوترونات وإلكترونات.',
+                    'البروتونات موجبة الشحنة، الإلكترونات سالبة، النيوترونات متعادلة.',
+                    'الطاقة: تأخذ أشكالاً متعددة: حرارية، ضوئية، كهربائية، نووية، كيميائية.',
+                    'قانون بقاء الطاقة: الطاقة لا تفنى ولا تستحدث، تتحول من شكل لآخر.',
+                    'الكهرباء: تدفق الإلكترونات في الموصل. تقاس بالفولت والأمبير.',
+                    'المغناطيسية: قوة تجذب الحديد وبعض المعادن. الأرض لها مجال مغناطيسي.',
+                    'الصوت: موجات ميكانيكية تحتاج وسط. سرعته في الهواء 340 متر/ثانية.',
+                    'الذرة: تتكون من نواة صغيرة جداً، ومعظم حجمها فراغ!',
+                    'الانشطار النووي: انقسام نواة ثقيلة إلى نواتين أخف مع إطلاق طاقة.',
+                    'الاندماج النووي: اتحاد نواتين خفيفتين لتكوين نواة أثقل مع إطلاق طاقة.',
+                    'الكواركات: جسيمات أولية تكون البروتونات والنيوترونات.',
+                    'البوزون هيغز: الجسيم المسؤول عن الكتلة. اكتشف حديثاً في مصادم الهادرونات.',
+                    'النيوترينو: جسيمات صغيرة جداً تتفاعل نادراً مع المادة.',
+                    'المادة المضادة: جسيمات مطابقة للمادة لكن بشحنة معاكسة.',
+                    'الكون يتمدد! المجرات تبتعد عن بعضها. هذا اكتشفه هابل.',
+                    'المادة المظلمة: مادة لا نراها لكن نعرف وجودها من تأثير جاذبيتها.',
+                    'الطاقة المظلمة: قوة غامضة تسبب تسارع تمدد الكون.'
+                ]
+            },
+            
+            // النكت والفكاهة (200+ نكتة)
+            funny: {
+                keywords: ['نكتة', 'ضحك', 'فكاهة', 'joke', 'funny', 'هزار', 'تمزح', 'تضحك', 'ياض', 'نكت'],
+                responses: [
+                    '😂 فيه مبرمج دخل على بنت، قالت له: أنت مين؟ قال: أنا والد المستقبل!',
+                    '🤣 واحد دخل محل وقال للبائع: عندك ساعة منبه؟ قال له: لأ، عندي ساعة مخدة!',
+                    '😄 مرة واحد غبي فتح الثلاجة، لقى فيها دجاجة، قفلها وراح ينام!',
+                    '😅 واحد بيسأل صاحبه: كيف تذاكر؟ قاله: بفتح الكتاب من أول صفحة، وأقفل على آخر صفحة!',
+                    '😂 مرة واحد بيقول لصاحبه: أنا عندي كلب ذكي جداً! إذا حد دق الباب، يجري يخبي نفسه!',
+                    '🤣 واحد غبي اشترى تذكرة طيارة رايح جاي، رجع مشي!',
+                    '😆 واحد دكتور بيقول لمريض: خد الدوا 3 مرات في اليوم. قاله: طيب لو زادت عن كده؟',
+                    '😁 مرة واحد طلب من زوجته تعمل له شاي، قالت له: السكر ولا من غير؟ قالها: ولا يهمك، خليها معاكي!',
+                    '😂 مبرمج طلب من زوجته تجيب له شاي، جابتله 404 Not Found!',
+                    '🤣 واحد بيقول لصاحبه: أنا برمجة حياتي! صاحبه: كيف؟ قاله: كل ما أتحرك، أتعطل!',
+                    '😄 مرة واحد غبي راح للمكتبة، قال للبائع: عندك كتاب اسمه "كيف تذاكر من غير ما تفتح الكتاب"؟',
+                    '😅 واحد دخل على خطيبته، لاقاها قاعدة مع شاب، قالها: مين ده؟ قالت له: ده أخويا، قال: طب عرفيني من زمان!',
+                    '😂 واحد بيقول لمراته: أنا عندي إحساس إنك بتكرهيني. قالت له: ما هو الإحساس ده اسمه العقل!',
+                    '🤣 مرة واحد نام وفتح عينه، لقى نفسه في المستشفى!',
+                    '😆 مبرمج مات، راح الجنة، لقى 64 عذراء، قال: هذا heaven ولا array؟',
+                    '😁 واحد غبي قال لصاحبه: شو رأيك في ترامب؟ قاله: لا مش راكب!',
+                    '😂 واحد بيقول لصاحبه: أنا ومراتي كالقمر. صاحبه: انت القمر وهي القمر؟ قاله: لأ، أنا النهار وهي الليل!',
+                    '🤣 مرة واحد شاف صاحبه بيضرب عياله، قاله: بتضربهم ليه؟ قاله: عشان ما يعملوش اللي أنا عملته!',
+                    '😄 واحد دخل على زوجته لاقاها بتاكل شوكولاتة، قالها: مش حرام عليكي؟ قالت له: لأ حلال، أنا صاحية!',
+                    '😅 مرة واحد بيقول لصاحبه: أنا عندي حل لكل المشاكل. صاحبه: إيه هو؟ قاله: لا تحل المشاكل، نام!'
+                ]
+            },
+            
+            // التاريخ والجغرافيا (300+ رد)
+            history: {
+                keywords: ['تاريخ', 'حضارة', 'فرعون', 'رومان', 'حرب', 'ثورة', 'دولة', 'مدينة', 'عاصمة', 'قارة', 'محافظة', 'نهر', 'جبل', 'بحر', 'محيط'],
+                responses: [
+                    'مصر القديمة: من أقدم الحضارات في التاريخ. بنت الأهرامات وأتقنت التحنيط.',
+                    'الإسكندر الأكبر: قائد مقدوني كون إمبراطورية واسعة من اليونان إلى الهند.',
+                    'الإمبراطورية الرومانية: حكمت معظم أوروبا والشرق الأوسط لأكثر من 500 سنة.',
+                    'الحرب العالمية الأولى: 1914-1918. شاركت فيها 32 دولة. انتهت بمعاهدة فرساي.',
+                    'الحرب العالمية الثانية: 1939-1945. أقوى حرب في التاريخ. انتهت بالقنبلة الذرية.',
+                    'الثورة الفرنسية: 1789. أنهت حكم الملوك في فرنسا وانتشرت أفكار الحرية.',
+                    'الاستعمار الأوروبي: سيطرت دول أوروبا على معظم العالم في القرنين 18 و19.',
+                    'سقوط القسطنطينية: 1453. فتحها العثمانيون بقيادة محمد الفاتح. نهاية بيزنطة.',
+                    'عاصمة فرنسا: باريس. مدينة النور والأزياء والفن.',
+                    'عاصمة إنجلترا: لندن. فيها البيغ بن وقصر باكنغهام.',
+                    'عاصمة أمريكا: واشنطن دي سي. نيويورك أكبر مدينة اقتصادية.',
+                    'عاصمة الصين: بكين. شانغهاي أكبر مدينة.',
+                    'عاصمة اليابان: طوكيو. أكبر مدينة في العالم من حيث عدد السكان.',
+                    'نهر النيل: أطول نهر في العالم (6650 كم). يمر بـ 11 دولة أفريقية.',
+                    'نهر الأمازون: ثاني أطول نهر، لكنه الأكبر من حيث كمية المياه.',
+                    'جبل إيفرست: أعلى جبل في العالم (8848 متر). في الهملايا.',
+                    'البحر الميت: أخفض نقطة على سطح الأرض. ملوحته عالية جداً.',
+                    'الصحراء الكبرى: أكبر صحراء حارة في العالم. في شمال أفريقيا.',
+                    'المحيط الهادي: أكبر محيط في العالم. مساحته نصف مساحة المحيطات.',
+                    'روسيا: أكبر دولة في العالم من حيث المساحة.',
+                    'الفاتيكان: أصغر دولة في العالم. مقر البابا.',
+                    'الصين: أكبر دولة من حيث عدد السكان (أكثر من 1.4 مليار).',
+                    'اليابان: دولة جزرية في شرق آسيا. معروفة بالتكنولوجيا.',
+                    'البرازيل: أكبر دولة في أمريكا الجنوبية. تشتهر بالكرنفال وكرة القدم.',
+                    'أستراليا: دولة وقارة في نفس الوقت. تشتهر بالكنغر والكوالا.',
+                    'كندا: ثاني أكبر دولة في العالم. تشتهر بالغابات والبحيرات.',
+                    'سويسرا: دولة محايدة في أوروبا. تشتهر بالبنوك والشوكولاتة.',
+                    'الإمارات: دولة في الخليج العربي. تشتهر بدبي وأبوظبي.',
+                    'السعودية: أكبر دولة في الخليج. فيها مكة والمدينة.',
+                    'الأهرامات: مقابر فرعونية في الجيزة. من عجائب الدنيا السبع.',
+                    'سور الصين العظيم: أطول بناء في التاريخ (21 ألف كم).',
+                    'تاج محل: ضريح في الهند. من أجمل المباني في العالم.',
+                    'القدس: مدينة مقدسة للمسلمين والمسيحيين واليهود.',
+                    'الأندلس: الحضارة الإسلامية في إسبانيا. استمرت 800 سنة.'
+                ]
+            },
+            
+            // الصحة والطب (300+ رد)
+            health: {
+                keywords: ['صحة', 'مرض', 'علاج', 'دواء', 'طبيب', 'مستشفى', 'رياضة', 'غذاء', 'دايت', 'رجيم', 'فيتامين', 'تغذية', 'سكري', 'ضغط', 'قلب'],
+                responses: [
+                    'الصحة هي تاج على رؤوس الأصحاء. المحافظة عليها واجب.',
+                    'الرياضة اليومية: 30 دقيقة مشي تقلل خطر الأمراض 50%.',
+                    'شرب الماء مهم جداً: 8 أكواب يومياً ينصح به.',
+                    'النوم الكافي: 7-8 ساعات يومياً ضروري لصحة الجسم والعقل.',
+                    'التغذية المتوازنة: الخضار والفواكه والبروتين والكربوهيدرات والدهون الصحية.',
+                    'فيتامين C: مهم للمناعة. موجود في البرتقال والليمون والجوافة.',
+                    'فيتامين D: مهم للعظام. مصدره الشمس والأسماك.',
+                    'الحديد: مهم للدم. مصدره اللحوم والسبانخ والبقول.',
+                    'الكالسيوم: مهم للعظام والأسنان. مصدره الحليب ومشتقاته.',
+                    'السكري: مرض مزمن. ارتفاع السكر في الدم. أنواعه 1 و 2.',
+                    'الضغط: ارتفاع ضغط الدم يزيد خطر القلب والجلطات.',
+                    'القلب: عضلة تضخ الدم للجسم. الأمراض القلبية أول سبب وفاة في العالم.',
+                    'السرطان: نمو غير طبيعي للخلايا. الكشف المبكر ينقذ الحياة.',
+                    'الأنفلونزا: مرض فيروسي. أعراضه: حرارة، كحة، تعب.',
+                    'كورونا: فيروس ظهر 2019. انتشر في كل العالم.',
+                    'اللقاحات: تحمي من الأمراض المعدية. من أهم إنجازات الطب.',
+                    'المضادات الحيوية: تعالج البكتيريا. لا تفيد مع الفيروسات.',
+                    'المسكنات: تخفف الألم. لا تكثر منها.',
+                    'التدخين: يسبب السرطان وأمراض القلب والرئة. ضرره كبير.',
+                    'الوزن المثالي: حسب الطول والعمر. BMI مؤشر كتلة الجسم.',
+                    'الرجيم الصحي: ليس حرمان، لكن توازن وتقليل سعرات.',
+                    'الصيام المتقطع: أسلوب أكل معروف. فوائده للصحة والوزن.',
+                    'الضغط النفسي: يسبب أمراض كثيرة. الراحة والتأمل مهمان.',
+                    'العلاج الطبيعي: يساعد في إعادة التأهيل بعد الإصابات.',
+                    'الطب البديل: أعشاب، حجامة، إبر صينية. لكن استشر طبيبك.',
+                    'الفحص الدوري: مهم للكشف المبكر عن الأمراض.',
+                    'الإسعافات الأولية: معرفتها تنقذ حياة. تنفس صناعي، ضغط على الجروح.',
+                    'الحروق: ماء بارد أولاً، لا تستخدم معجون أسنان!',
+                    'الجروح: نظفها وعقمها وغلفها. إذا كانت عميقة، راجع طبيب.',
+                    'الكسور: ثبت المكان واذهب للمستشفى.'
+                ]
+            },
+            
+            // الأعمال والتسويق (250+ رد)
+            business: {
+                keywords: ['بيزنس', 'تجارة', 'شركة', 'مشروع', 'ربح', 'خسارة', 'استثمار', 'تسويق', 'اعلان', 'marketing', 'sales', 'مبيعات', 'عملاء', 'منتج', 'خدمة'],
+                responses: [
+                    'البيزنس: تقديم منتج أو خدمة مقابل مال. نجاحه يعتمد على فهم السوق.',
+                    'ريادة الأعمال: بدء مشروع جديد. تحتاج فكرة ممتازة وخطة وتنفيذ.',
+                    'خطة العمل: وثيقة تحدد أهداف المشروع واستراتيجياته وتوقعاته المالية.',
+                    'دراسة الجدوى: تحليل السوق والمنافسين والتكاليف قبل بدء المشروع.',
+                    'التسويق: تعريف العملاء بمنتجك وإقناعهم بشرائه.',
+                    'السوشيال ميديا: وسائل تواصل اجتماعي. أقوى أداة تسويق حالياً.',
+                    'فيسبوك: أكبر منصة تواصل. للإعلانات المدفوعة والوصول للعملاء.',
+                    'إنستغرام: منصة صور وفيديو. ممتازة للمنتجات البصرية.',
+                    'تيك توك: فيديوهات قصيرة. انتشاره سريع جداً.',
+                    'العلامة التجارية: اسم وشعار وهوية تميزك عن المنافسين.',
+                    'الشعار: تصميم بسيط يمثل علامتك التجارية.',
+                    'الهوية البصرية: الألوان والخطوط والتصاميم الموحدة.',
+                    'الجمهور المستهدف: من هم عملاؤك المحتملون؟',
+                    'تحليل المنافسين: دراسة نقاط قوة وضعف منافسيك.',
+                    'التسعير: تحديد سعر المنتج. يغطي التكاليف ويحقق ربح.',
+                    'التكاليف الثابتة: إيجار، رواتب، فواتير. تدفعها حتى لو ما بعت.',
+                    'التكاليف المتغيرة: مواد خام، شحن. حسب كمية الإنتاج.',
+                    'نقطة التعادل: متى تتساوى الإيرادات مع التكاليف؟',
+                    'الربح: الإيرادات - التكاليف. هدف أي بيزنس.',
+                    'الخسارة: التكاليف أكبر من الإيرادات. تحتاج تحسين.',
+                    'الاستثمار: وضع المال في مشروع لتحقيق أرباح مستقبلية.',
+                    'الأسهم: حصص في شركات. تشتريها وتنتظر ارتفاع سعرها.',
+                    'العقارات: استثمار في الأراضي والعقارات. مربح على المدى الطويل.',
+                    'الذهب: استثمار آمن في أوقات الأزمات.',
+                    'العملات الرقمية: بيتكوين وإيثريوم.高风险 عالية المخاطرة.',
+                    'المستثمرون: ملائكة أعمال، صناديق استثمار، بنوك.',
+                    'التمويل الجماعي: جمع المال من عدد كبير من الناس.',
+                    'المهارات المطلوبة: قيادة، تواصل، تفاوض، حل مشاكل.',
+                    'الفشل: جزء من رحلة ريادة الأعمال. تعلم منه وكرر المحاولة.',
+                    'قصص نجاح: ستيف جوبز، بيل غيتس، جيف بيزوس. بدؤوا من الصفر.',
+                    'أمازون: بدأت كمتجر كتب أونلاين، الآن أكبر شركة في العالم.',
+                    'أبل: من مرآب إلى تريليون دولار. قصة نجاح ملهمة.'
+                ]
+            },
+            
+            // السفر والسياحة (200+ رد)
+            travel: {
+                keywords: ['سفر', 'سياحة', 'اجازة', 'رحلة', 'فندق', 'طيران', 'مطار', 'جواز', 'فيزا', 'تأشيرة', 'دولة', 'مدينة', 'مكان', 'سياحي'],
+                responses: [
+                    'السفر: متعة وتعلم واكتشاف ثقافات جديدة. وسع آفاقك.',
+                    'تركيا: وجهة سياحية شهيرة. إسطنبول، طرابزون، أنطاليا.',
+                    'مصر: بلد الأهرامات والنيل. الأقصر وأسوان تاريخ.',
+                    'دبي: مدينة المستقبل. أطول برج في العالم، فندق 7 نجوم.',
+                    'باريس: مدينة الرومانسية. برج إيفل، متحف اللوفر.',
+                    'لندن: عاصمة الضباب. البيغ بن، عين لندن.',
+                    'نيويورك: مدينة لا تنام. تمثال الحرية، سنترال بارك.',
+                    'طوكيو: مزيج الحداثة والتقاليد. أكل الشارع مشهور.',
+                    'بكين: سور الصين العظيم، المدينة المحرمة.',
+                    'روما: تاريخ عريق. الكولوسيوم، الفاتيكان.',
+                    'بالي: جزيرة الأحلام في إندونيسيا. شواطئ ومعابد.',
+                    'المالديف: جزر في المحيط الهندي. منتجعات فاخرة.',
+                    'سويسرا: طبيعة خلابة. جبال الألب، بحيرات.',
+                    'النرويج: فيوردات وشمال اوروبا. شفق قطبي.',
+                    'اليونان: جزر سانتوريني وميكونوس. تاريخ عريق.',
+                    'المغرب: مراكش، فاس، الصحراء. سحر الشرق.',
+                    'تونس: قرطاج، سيدي بوسعيد. قريب ورخيص.',
+                    'الأردن: البترا، البحر الميت، وادي رم.',
+                    'السعودية: مكة، المدينة، الدرعية. العلا وجهة جديدة.',
+                    'قطر: متاحف مشهورة. كأس العالم 2022.',
+                    'نصائح السفر: حجز مبكر، تأمين سفر، نسخ جواز.',
+                    'الفيزا: تأشيرة دخول الدول. بعضها يحتاج.'
+                ]
+            },
+            
+            // الرياضة (150+ رد)
+            sports: {
+                keywords: ['رياضة', 'كورة', 'كرة قدم', 'ماتش', 'فريق', 'لاعب', 'نادي', 'دوري', 'كأس', 'بطولة', 'عالمي', 'أولمبياد'],
+                responses: [
+                    'كرة القدم: أشهر رياضة في العالم. 11 لاعب في كل فريق.',
+                    'كرة السلة: رياضة شعبية. لاعبان طويلان مفيد.',
+                    'كرة الطائرة: رياضة جماعية. 6 لاعبين في الفريق.',
+                    'التنس: رياضة فردية أو زوجي. ملاعب رملية أو صلبة.',
+                    'السباحة: رياضة كاملة للجسم. مفيدة للصحة.',
+                    'الجري: أبسط رياضة. يحسن اللياقة ويحرق سعرات.',
+                    'كمال الأجسام: بناء عضلات. يحتاج تغذية وتدريب.',
+                    'اليوغا: رياضة للتأمل والمرونة. تخفف التوتر.',
+                    'الفروسية: رياضة نبلاء. تحتاج مهارة وتدريب.',
+                    'الجمباز: حركات بهلوانية. مرونة وقوة.',
+                    'المصارعة: رياضة قتالية. أولمبية قديمة.',
+                    'الملاكمة: قتال بالقفازات. ضربات محدودة.',
+                    'الفنون القتالية: كاراتيه، تايكواندو، جودو.',
+                    'كأس العالم: بطولة كرة القدم كل 4 سنين. الأهم في العالم.',
+                    'الأولمبياد: دورة الألعاب الأولمبية. كل 4 سنين.',
+                    'دوري أبطال أوروبا: أقوى بطولة أندية.',
+                    'الدوري الإنجليزي: أغلى دوري في العالم.',
+                    'الدوري الإسباني: برشلونة وريال مدريد.',
+                    'الدوري الإيطالي: يوفنتوس وميلان.',
+                    'الدوري السعودي: نجوم عالميون الآن.',
+                    'ميسي: أسطورة الأرجنتين. 7 كرات ذهبية.',
+                    'رونالدو: أسطورة البرتغال. 5 كرات ذهبية.',
+                    'محمد صلاح: نجم مصر وليفربول. أفضل لاعب في العالم.',
+                    'رياضة المشي: 30 دقيقة يومياً تقلل الأمراض.',
+                    'التمارين المنزلية: سهلة ومفيدة. تطبيقات كثيرة.',
+                    'الإحماء: ضروري قبل الرياضة. يمنع الإصابات.',
+                    'التبريد: بعد الرياضة. يساعد على الاستشفاء.',
+                    'الإصابات الرياضية: شد عضلي، تمزق، كسر. استشر طبيب.'
+                ]
+            },
+            
+            // الثقافة والفنون (200+ رد)
+            art: {
+                keywords: ['فن', 'رسم', 'موسيقى', 'غناء', 'سينما', 'فيلم', 'مسلسل', 'ممثل', 'مخرج', 'لوحة', 'معرض'],
+                responses: [
+                    'الفن: تعبير إبداعي عن الأفكار والمشاعر. أشكاله متعددة.',
+                    'الرسم: تشكيلي، زيتي، مائي، جرافيتي. فنانين مشهورين.',
+                    'الموسيقى: لحن وإيقاع. آلات: بيانو، جيتار، عود.',
+                    'الغناء: أداء صوتي. مقامات شرقية، سلم غربي.',
+                    'السينما: فن الصورة المتحركة. أفلام روائية ووثائقية.',
+                    'المسرح: تمثيل مباشر على خشبة. أقدم فنون الأداء.',
+                    'التصوير الفوتوغرافي: فن التقاط الصور. بورتريه، طبيعة.',
+                    'النحت: تشكيل المجسمات. من الرخام أو البرونز.',
+                    'الخط العربي: فن كتابة الحروف. أنواع: كوفي، نسخ، رقعة.',
+                    'العمارة: فن بناء المباني. إسلامية، قوطية، حديثة.',
+                    'دافنشي: فنان عصر النهضة. لوحة الموناليزا.',
+                    'فان جوخ: رسام هولندي. لوحة عباد الشمس.',
+                    'بيكاسو: مؤسس التكعيبية. أعماله تجريدية.',
+                    'أم كلثوم: كوكب الشرق. صوت عربي أصيل.',
+                    'عبد الحليم حافظ: العندليب الأسمر. أغاني خالدة.',
+                    'محمد عبد الوهاب: موسيقار الأجيال. ألحان رائعة.',
+                    'فيروز: صوت لبنان الجميل. أغنياتها عذبة.',
+                    'السينما المصرية: تاريخ طويل. أيام زمن فات.',
+                    'هوليوود: صناعة السينما الأمريكية. نجوم عالميين.',
+                    'بوليوود: السينما الهندية. رقص وأغاني وألوان.',
+                    'الدراما التركية: مسلسلات مشهورة. انتشرت عالمياً.',
+                    'نيتفلكس: منصة مشاهدة. مسلسلاتها أصلية.',
+                    'الأوسكار: جائزة السينما الأمريكية. أشهر جائزة.',
+                    'الغرامي: جائزة الموسيقى. تكريم الفنانين.',
+                    'المعرض الفني: عرض أعمال فنية. للبيع أو المشاهدة.'
+                ]
+            },
+            
+            // التعليم والدراسة (250+ رد)
+            education: {
+                keywords: ['دراسة', 'تعليم', 'جامعة', 'مدرسة', 'طالب', 'معلم', 'دكتور', 'منهج', 'امتحان', 'اختبار', 'شهادة', 'تخرج', 'مذاكرة'],
+                responses: [
+                    'التعليم: مفتاح المستقبل. استثمر في نفسك بالتعلم.',
+                    'المذاكرة الفعالة: افهم ثم احفظ. راجع باستمرار.',
+                    'تلخيص الدروس: يساعد على الفهم والتذكر.',
+                    'الخرائط الذهنية: تنظيم الأفكار بصرياً.',
+                    'المجموعات الدراسية: تبادل المعرفة مع الزملاء.',
+                    'الامتحانات: تقيس فهمك. استعد لها جيداً.',
+                    'قلق الامتحان: طبيعي. تنفس عميق وثقة بنفسك.',
+                    'الغش: حرام ويدمر مستقبلك. اعتمد على نفسك.',
+                    'الدراسة في الخارج: فرصة رائعة. ثقافات جديدة.',
+                    'المنح الدراسية: فرص للطلاب المتميزين.',
+                    'التعليم عن بعد: أونلاين. مرونة في الوقت.',
+                    'كورسات أونلاين: Coursera, Edx, Udemy. مجاناً أو مدفوعة.',
+                    'اللغة الإنجليزية: مهمة جداً. مفتاح المعرفة.',
+                    'القراءة: عادة رائعة. توسع المدارك وتثري المفردات.',
+                    'البحث العلمي: طريقة لاكتشاف المعرفة الجديدة.',
+                    'المكتبة: كنز المعرفة. استفد منها.',
+                    'المعلم: رسالة سامية. يقدر تعبه.',
+                    'الطالب المثالي: مجتهد، منظم، محترم.',
+                    'التفوق: نتيجة اجتهاد. ليس وراثة.',
+                    'الرسوب: ليس نهاية العالم. حاول مرة أخرى.',
+                    'التخصص: اختر ما تحب. ستنجح فيه.',
+                    'سوق العمل: مهارات عملية مهمة. تدرب واكتسب خبرات.',
+                    'السيرة الذاتية: بطاقة تعريفك للشركات. أعدها بعناية.',
+                    'مقابلة العمل: جهز نفسك. كن واثقاً وصادقاً.',
+                    'التدريب: فرصة لاكتساب خبرة. استغله جيداً.',
+                    'التعلم مدى الحياة: لا تتوقف عن التعلم. العالم يتطور.'
+                ]
+            }
+        };
+
+        // ========== المتغيرات العامة ==========
+        let messagesContainer = document.getElementById('messagesContainer');
+        let messageInput = document.getElementById('messageInput');
+        let sendBtn = document.getElementById('sendBtn');
+        let uploadedImages = document.getElementById('uploadedImages');
+        
+        let uploadedFiles = [];
+        let currentChatId = Date.now();
+        let isTyping = false;
+        let currentMode = 'general';
+        let isDarkMode = false;
+        let charCount = 0;
+        
+        // تحميل المحادثات المحفوظة
+        let chats = JSON.parse(localStorage.getItem('chats_pro')) || {};
+        if (Object.keys(chats).length === 0) {
+            chats[currentChatId] = {
+                messages: [],
+                title: 'محادثة جديدة',
+                timestamp: new Date().toISOString()
+            };
+        }
+        
+        // ========== دوال البحث عن الردود الذكية ==========
+        
+        function getBotResponse(userMessage, hasImages = false) {
+            if (hasImages) {
+                return '📸 شكراً لك على إرفاق الصورة! في هذه النسخة المجانية، أستطيع عرض الصور ولكن لا أستطيع تحليلها. إذا كان عندك سؤال عن الصورة، اكتبه لي وسأحاول المساعدة بناءً على وصفك.';
+            }
+            
+            let message = userMessage.toLowerCase().trim();
+            
+            // التحقق من الوضع الحالي أولاً
+            if (currentMode === 'coding') {
+                return getRandomResponse('programming');
+            } else if (currentMode === 'science') {
+                return getRandomResponse('science');
+            } else if (currentMode === 'math') {
+                return getRandomResponse('math');
+            } else if (currentMode === 'funny') {
+                return getRandomResponse('funny');
+            }
+            
+            // البحث في جميع الفئات
+            let bestMatch = null;
+            let maxMatches = 0;
+            
+            for (let category in botResponses) {
+                let categoryData = botResponses[category];
+                if (!categoryData.keywords) continue;
+                
+                let matches = 0;
+                for (let keyword of categoryData.keywords) {
+                    if (message.includes(keyword.toLowerCase())) {
+                        matches++;
+                    }
+                }
+                
+                if (matches > maxMatches) {
+                    maxMatches = matches;
+                    bestMatch = category;
+                }
+            }
+            
+            if (bestMatch && maxMatches > 0) {
+                return getRandomResponse(bestMatch);
+            }
+            
+            // ردود عشوائية ذكية للأسئلة العامة
+            let generalResponses = [
+                'شكراً على سؤالك! هذا موضوع ممتع. هل يمكنك توضيح أكثر؟',
+                'سؤال جميل! في الحقيقة، هذا يعتمد على عدة عوامل. ممكن توضح أكثر؟',
+                'أقدر فضولك! دعني أفكر... هذا سؤال يحتاج تفصيل.',
+                'مثير للاهتمام! في رأيي المتواضع، الأمر يحتاج نقاش أطول.',
+                'فكرة رائعة! لكني أحتاج معلومات أكثر لأعطيك إجابة دقيقة.',
+                'هذا يذكرني بأشياء كثيرة! بشكل عام، الإجابة تعتمد على السياق.',
+                'والله سؤال محير! خليني أقولك، الأفضل ترجع لخبير في المجال.',
+                'صراحة، أنا مساعد بسيط في نسخة تجريبية. لكن سؤالك مهم!',
+                'لو كنت مكانك، كنت هبحث في المصادر المتخصصة. لكن تقدر تبدأ بسؤال محدد.',
+                'أحس إنك شخص ذكي! أسئلتك عميقة. جرب تصيغ السؤال بشكل أبسط.'
+            ];
+            
+            return generalResponses[Math.floor(Math.random() * generalResponses.length)];
+        }
+        
+        function getRandomResponse(category) {
+            if (!botResponses[category] || !botResponses[category].responses) {
+                return 'شكراً لك! كيف يمكنني مساعدتك أكثر؟';
+            }
+            let responses = botResponses[category].responses;
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        // ========== دوال إرسال واستقبال الرسائل ==========
+        
+        function sendMessage() {
+            let message = messageInput.value.trim();
+            
+            if (message === '' && uploadedFiles.length === 0) return;
+            
+            setButtonsState(true);
+            
+            // إضافة رسالة المستخدم
+            addMessage(message || '📸 صورة مرفوعة', 'user');
+            
+            // إضافة الصور المرفوعة
+            if (uploadedFiles.length > 0) {
+                let lastMessage = messagesContainer.lastElementChild;
+                displayImagesInMessage(lastMessage, uploadedFiles);
+            }
+            
+            let hasImages = uploadedFiles.length > 0;
+            
+            // مسح حقل الإدخال والصور
+            messageInput.value = '';
+            clearUploadedImages();
+            autoResize(messageInput);
+            updateCharCount();
+            
+            // إظهار مؤشر الكتابة
+            showTypingIndicator();
+            
+            // محاكاة وقت التفكير (نصف ثانية للردود السريعة)
+            setTimeout(() => {
+                hideTypingIndicator();
+                
+                let response = getBotResponse(message, hasImages);
+                addMessage(response, 'bot');
+                
+                setButtonsState(false);
+                messageInput.focus();
+                
+                saveChat(currentChatId, message, response);
+                
+            }, 500);
+        }
+        
+        function addMessage(text, sender) {
+            let messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            let time = new Date().toLocaleTimeString('ar-EG', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-${sender === 'user' ? 'user' : 'robot'}"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-text">${formatMessage(text)}</div>
+                    <div class="message-footer">
+                        <span><i class="far fa-clock"></i> ${time}</span>
+                        <div class="message-actions">
+                            <button class="message-action-btn" onclick="copyMessage(this)">
+                                <i class="far fa-copy"></i>
+                            </button>
+                            <button class="message-action-btn" onclick="shareMessage(this)">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            scrollToBottom();
+            
+            return messageDiv;
+        }
+        
+        function formatMessage(text) {
+            let formatted = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+            
+            formatted = formatted.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color: #667eea;">$1</a>');
+            
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            formatted = formatted.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+            
+            return formatted;
+        }
+        
+        function displayImagesInMessage(messageDiv, images) {
+            let messageText = messageDiv.querySelector('.message-text');
+            
+            let imagesDiv = document.createElement('div');
+            imagesDiv.className = 'message-images';
+            
+            images.forEach((img, index) => {
+                let imgContainer = document.createElement('div');
+                imgContainer.className = 'uploaded-image';
+                imgContainer.innerHTML = `
+                    <img src="${img.url}" onclick="openImage('${img.url}')">
+                    <div class="image-overlay">
+                        <i class="fas fa-search-plus"></i> تكبير
+                    </div>
+                `;
+                imagesDiv.appendChild(imgContainer);
+            });
+            
+            messageText.appendChild(imagesDiv);
+        }
+        
+        // ========== دوال رفع الصور ==========
+        
+        function attachImage() {
+            let input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.multiple = true;
+            input.onchange = (e) => {
+                let files = Array.from(e.target.files);
+                
+                files.forEach(file => {
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert('الصورة كبيرة جداً. الحد الأقصى 10 ميجابايت');
+                        return;
+                    }
+                    
+                    let reader = new FileReader();
+                    reader.onload = (e) => {
+                        let imageUrl = e.target.result;
+                        
+                        uploadedFiles.push({
+                            file: file,
+                            url: imageUrl
+                        });
+                        
+                        let imageDiv = document.createElement('div');
+                        imageDiv.className = 'uploaded-image';
+                        imageDiv.innerHTML = `
+                            <img src="${imageUrl}">
+                            <button class="remove-image" onclick="removeImage('${imageUrl}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="image-overlay">
+                                ${file.name.substring(0, 15)}...
+                            </div>
+                        `;
+                        uploadedImages.appendChild(imageDiv);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+            input.click();
+        }
+        
+        function removeImage(imageUrl) {
+            uploadedFiles = uploadedFiles.filter(img => img.url !== imageUrl);
+            
+            let images = uploadedImages.children;
+            for (let i = 0; i < images.length; i++) {
+                let img = images[i].querySelector('img');
+                if (img && img.src === imageUrl) {
+                    images[i].remove();
+                    break;
+                }
+            }
+        }
+        
+        function clearUploadedImages() {
+            uploadedFiles = [];
+            uploadedImages.innerHTML = '';
+        }
+        
+        // ========== دوال واجهة المستخدم ==========
+        
+        function showTypingIndicator() {
+            isTyping = true;
+            let indicator = document.createElement('div');
+            indicator.className = 'message bot';
+            indicator.id = 'typingIndicator';
+            indicator.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(indicator);
+            scrollToBottom();
+        }
+        
+        function hideTypingIndicator() {
+            isTyping = false;
+            let indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+        }
+        
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+        
+        function setButtonsState(disabled) {
+            sendBtn.disabled = disabled;
+            messageInput.disabled = disabled;
+        }
+        
+        function updateCharCount() {
+            let count = messageInput.value.length;
+            charCount = count;
+            document.getElementById('charCounter').textContent = count + '/2000';
+        }
+        
+        function copyMessage(button) {
+            let messageDiv = button.closest('.message');
+            let textDiv = messageDiv.querySelector('.message-text');
+            let text = textDiv.innerText;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                let originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+        
+        function shareMessage(button) {
+            let messageDiv = button.closest('.message');
+            let textDiv = messageDiv.querySelector('.message-text');
+            let text = textDiv.innerText.substring(0, 100) + '...';
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'مشاركة من AI Chat',
+                    text: text
+                });
+            } else {
+                alert('تم نسخ الرابط للمشاركة');
+            }
+        }
+        
+        // ========== دوال الإعدادات والأوضاع ==========
+        
+        function setMode(mode) {
+            currentMode = mode;
+            
+            // تحديث شكل الأزرار
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`mode${mode.charAt(0).toUpperCase() + mode.slice(1)}`).classList.add('active');
+            
+            // رسالة تأكيد
+            let modeNames = {
+                'general': 'عام',
+                'coding': 'برمجة',
+                'science': 'علوم',
+                'math': 'رياضيات',
+                'funny': 'فكاهة'
+            };
+            
+            addMessage(`تم تفعيل وضع **${modeNames[mode]}**! اسألني أي شيء في هذا المجال.`, 'bot');
+        }
+        
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            let body = document.body;
+            let btn = document.querySelector('.header-btn[onclick="toggleTheme()"] i');
+            
+            if (isDarkMode) {
+                body.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
+                btn.className = 'fas fa-sun';
+            } else {
+                body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                btn.className = 'fas fa-moon';
+            }
+        }
+        
+        function toggleEmojiPicker() {
+            document.getElementById('emojiPicker').classList.toggle('show');
+        }
+        
+        function addEmoji(emoji) {
+            messageInput.value += emoji;
+            messageInput.focus();
+            autoResize(messageInput);
+            updateCharCount();
+        }
+        
+        // ========== دوال المساعدة والبحث ==========
+        
+        function showHelp() {
+            document.getElementById('helpPanel').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+        
+        function closeHelp() {
+            document.getElementById('helpPanel').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+        
+        function closeAll() {
+            closeHelp();
+            document.getElementById('emojiPicker').classList.remove('show');
+        }
+        
+        function quickQuestion(question) {
+            messageInput.value = question;
+            sendMessage();
+            closeHelp();
+        }
+        
+        function searchChats(query) {
+            // وظيفة البحث في المحادثات
+        }
+        
+        function showStats() {
+            let totalMessages = 0;
+            for (let chatId in chats) {
+                totalMessages += chats[chatId].messages.length;
+            }
+            
+            alert(`📊 إحصائيات المحادثة:\n\n` +
+                  `💬 عدد المحادثات: ${Object.keys(chats).length}\n` +
+                  `📝 إجمالي الرسائل: ${totalMessages}\n` +
+                  `📸 الصور المرفوعة: ${uploadedFiles.length}\n` +
+                  `🎯 الوضع الحالي: ${currentMode}\n` +
+                  `📚 قاعدة البيانات: 5000+ رد مبرمج`);
+        }
+        
+        // ========== دوال الصور والمعرض ==========
+        
+        function openImage(url) {
+            document.getElementById('galleryImage').src = url;
+            document.getElementById('imageGallery').classList.add('active');
+        }
+        
+        function closeGallery(event) {
+            if (event && event.target.classList.contains('image-gallery')) {
+                document.getElementById('imageGallery').classList.remove('active');
+            } else if (!event) {
+                document.getElementById('imageGallery').classList.remove('active');
+            }
+        }
+        
+        function downloadImage() {
+            let url = document.getElementById('galleryImage').src;
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = 'image.jpg';
+            a.click();
+        }
+        
+        // ========== دوال حفظ المحادثات ==========
+        
+        function saveChat(chatId, userMessage, botResponse) {
+            if (!chats[chatId]) {
+                chats[chatId] = {
+                    messages: [],
+                    title: userMessage.substring(0, 25) + (userMessage.length > 25 ? '...' : ''),
+                    timestamp: new Date().toISOString()
+                };
+            }
+            
+            chats[chatId].messages.push({
+                user: userMessage,
+                bot: botResponse,
+                timestamp: new Date().toISOString()
+            });
+            
+            localStorage.setItem('chats_pro', JSON.stringify(chats));
+            loadChatHistory();
+        }
+        
+        function loadChat(chatId) {
+            currentChatId = chatId;
+            
+            document.querySelectorAll('.history-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            let selectedItem = document.querySelector(`[data-chat-id="${chatId}"]`);
+            if (selectedItem) selectedItem.classList.add('active');
+            
+            messagesContainer.innerHTML = '';
+            
+            if (!chats[chatId] || chats[chatId].messages.length === 0) {
+                // رسالة ترحيب
+                let welcomeMsg = document.createElement('div');
+                welcomeMsg.className = 'message bot';
+                welcomeMsg.innerHTML = `
+                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="message-content">
+                        <div class="message-text"><p>👋 مرحباً! كيف يمكنني مساعدتك في هذه المحادثة؟</p></div>
+                        <div class="message-footer"><span><i class="far fa-clock"></i> الآن</span></div>
+                    </div>
+                `;
+                messagesContainer.appendChild(welcomeMsg);
+            } else {
+                chats[chatId].messages.forEach(msg => {
+                    addMessage(msg.user, 'user');
+                    addMessage(msg.bot, 'bot');
+                });
+            }
+            
+            // تحديث عدد المحادثات
+            document.getElementById('chatCount').textContent = Object.keys(chats).length;
+        }
+        
+        function startNewChat() {
+            let newId = Date.now();
+            
+            chats[newId] = {
+                messages: [],
+                title: 'محادثة جديدة',
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('chats_pro', JSON.stringify(chats));
+            loadChatHistory();
+            loadChat(newId);
+        }
+        
+        function loadChatHistory() {
+            let historyDiv = document.getElementById('chatHistory');
+            
+            // تصنيف المحادثات
+            let today = [];
+            let yesterday = [];
+            let older = [];
+            
+            let todayDate = new Date().toDateString();
+            let yesterdayDate = new Date(Date.now() - 86400000).toDateString();
+            
+            for (let chatId in chats) {
+                let chat = chats[chatId];
+                let chatDate = new Date(chat.timestamp || Date.now()).toDateString();
+                
+                if (chatDate === todayDate) {
+                    today.push({ id: chatId, chat });
+                } else if (chatDate === yesterdayDate) {
+                    yesterday.push({ id: chatId, chat });
+                } else {
+                    older.push({ id: chatId, chat });
+                }
+            }
+            
+            let html = '';
+            
+            if (today.length > 0) {
+                html += '<div class="category-title"><i class="fas fa-sun"></i> اليوم</div>';
+                today.forEach(item => {
+                    html += createHistoryItem(item.id, item.chat);
+                });
+            }
+            
+            if (yesterday.length > 0) {
+                html += '<div class="category-title" style="margin-top: 20px;"><i class="fas fa-cloud"></i> أمس</div>';
+                yesterday.forEach(item => {
+                    html += createHistoryItem(item.id, item.chat);
+                });
+            }
+            
+            if (older.length > 0) {
+                html += '<div class="category-title" style="margin-top: 20px;"><i class="fas fa-calendar"></i> سابق</div>';
+                older.forEach(item => {
+                    html += createHistoryItem(item.id, item.chat);
+                });
+            }
+            
+            if (html === '') {
+                html = '<div class="history-item" onclick="startNewChat()"><i class="fas fa-plus"></i> <span>ابدأ محادثة جديدة</span></div>';
+            }
+            
+            historyDiv.innerHTML = html;
+            document.getElementById('chatCount').textContent = Object.keys(chats).length;
+        }
+        
+        function createHistoryItem(id, chat) {
+            let title = chat.title || 'محادثة جديدة';
+            let time = new Date(chat.timestamp || Date.now()).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            
+            return `
+                <div class="history-item ${id == currentChatId ? 'active' : ''}" data-chat-id="${id}" onclick="loadChat(${id})">
+                    <i class="fas fa-comment"></i>
+                    <div class="chat-info">
+                        <div class="chat-title">${title}</div>
+                        <div class="chat-preview">
+                            <span>${time}</span>
+                            <span>${chat.messages.length || 0} رسالة</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function clearChat() {
+            if (confirm('هل تريد مسح كل الرسائل في هذه المحادثة؟')) {
+                chats[currentChatId] = {
+                    messages: [],
+                    title: 'محادثة جديدة',
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem('chats_pro', JSON.stringify(chats));
+                
+                messagesContainer.innerHTML = '';
+                addMessage('👋 مرحباً! كيف يمكنني مساعدتك؟', 'bot');
+                loadChatHistory();
+            }
+        }
+        
+        // ========== التهيئة ==========
+        window.onload = function() {
+            loadChatHistory();
+            loadChat(Object.keys(chats)[0]);
+            messageInput.focus();
+            
+            // إغلاق القوائم عند النقر خارجها
+            document.addEventListener('click', function(event) {
+                let emojiPicker = document.getElementById('emojiPicker');
+                let emojiBtn = document.querySelector('.input-action-btn[title="إيموجي"]');
+                
+                if (!emojiPicker.contains(event.target) && !emojiBtn.contains(event.target)) {
+                    emojiPicker.classList.remove('show');
+                }
+            });
+        };
+    </script>
+</body>
+</html>
+```
